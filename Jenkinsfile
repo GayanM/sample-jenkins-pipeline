@@ -1,9 +1,18 @@
+def gv
 pipeline {
     agent any
     environment {
         USER_CREDENTIALS = credentials('GBoss-nexus')
     }
     stages {
+        stage('init'){
+            steps {
+                script {
+                    gv = load "script.groovy"
+                    gv.buildApp()
+                }
+            }
+        }
         stage('Clone Repo') {
             steps {
                 withGroovy{
