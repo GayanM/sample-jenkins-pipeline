@@ -8,6 +8,7 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
+                echo "test"
                 git branch: '${SOURCE_BRANCH}', changelog: false, credentialsId: 'GBoss', poll: false, url: 'https://github.com/Icurity/lab-gw-kong.git'
             }
         }
