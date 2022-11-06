@@ -8,14 +8,15 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                echo "testt"
                 git branch: '${SOURCE_BRANCH}', changelog: false, credentialsId: 'GBoss', poll: false, url: 'https://github.com/Icurity/lab-gw-kong.git'
             }
         }
         stage('Building Image') {
             steps {
                 script {
-                    dockerImage = docker.build "${APPLICATION}:${TAG}"
+                    dir("cp"){
+                        dockerImage = docker.build "${APPLICATION}:${TAG}"
+                    }    
                 }
             }
         }
@@ -28,23 +29,24 @@ pipeline {
         }  
         stage('Clone Helm') {
             steps {
-                git branch: 'main', changelog: false, credentialsId: 'GBoss', poll: false, url: 'https://github.com/Icurity/lab_devops.git'
+                git branch: '${VALUES_BRANCH}', changelog: false, credentialsId: 'GBoss', poll: false, url: 'https://github.com/Icurity/lab-service-manifests.git'
             }
         }
         stage('Replace docker tag') {
             steps {
                 script{
-                    def text = readYaml file:"${WORKSPACE}/iac/helms/kong/values.yaml"
+                    def text = readYaml file:"${WORKSPACE}/charts/lab-gw-kong/cp/values.yaml"
                     text.kong.image.tag = "${TAG}"
-                    sh "rm -rf iac/helms/kong/values.yaml"
-                    writeYaml file: 'iac/helms/kong/values.yaml', data: text
-                    sh "cat iac/helms/kong/values.yaml"
-                    sh 'git remote set-url origin https://$USER_CREDENTIALS_GIT_USR:$USER_CREDENTIALS_GIT_PSW@github.com/Icurity/lab_devops.git'
+                    sh "cat charts/lab-gw-kong/cp/values.yaml"
+                    sh "rm -rf charts/lab-gw-kong/cp/values.yaml"
+                    writeYaml file: 'charts/lab-gw-kong/cp/values.yaml', data: text
+                    sh "cat charts/lab-gw-kong/cp/values.yaml"
+                    sh 'git remote set-url origin https://$USER_CREDENTIALS_GIT_USR:$USER_CREDENTIALS_GIT_PSW@github.com/Icurity/lab-service-manifests.git'
                     sh 'git config --global user.email "gmgunawardana@gmail.com"'
                     sh 'git config --global user.name "GayanM"'
                     sh "git add ."
-                    sh 'git commit -am "Change values.yaml viaaa Jenkins Pipeline"'
-                    sh "git push origin main"
+                    sh 'git commit -am "Change values.yaml via Jenkins Pipeline"'
+                    sh "git push origin ${VALUES_BRANCH}"
                 }
             }
         }
