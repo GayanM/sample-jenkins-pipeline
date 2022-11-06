@@ -43,7 +43,7 @@ pipeline {
                     sh 'git config --global user.email "gmgunawardana@gmail.com"'
                     sh 'git config --global user.name "GayanM"'
                     sh "git add ."
-                    sh 'git commit -am "Change values.yaml viaa Jenkins Pipeline"'
+                    sh 'git commit -am "Change values.yaml via Jenkins Pipeline"'
                     sh "git push origin main"
                 }
             }
