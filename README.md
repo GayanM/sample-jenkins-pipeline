@@ -1,1 +1,1 @@
-# sample-jenkins-pipelinee
+# sample-jenkins-pipeline
