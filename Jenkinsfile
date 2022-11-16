@@ -46,7 +46,6 @@ pipeline {
                     sh 'git config --global user.name "GayanM"'
                     sh "git add ."
                     sh 'git commit -am "Change values.yaml viaa Jenkins Pipeline"'
-                    sh "git push origin ${VALUES_BRANCH}"
                 }
             }
         }
